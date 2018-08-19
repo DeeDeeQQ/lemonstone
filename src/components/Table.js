@@ -5,8 +5,13 @@ import { getList } from "../actions/dataList";
 
 class Table extends Component {
   componentDidMount() {
+    var self = this;
     this.props.getData();
+    setInterval(function() {
+      self.props.getData();
+    }, 20000);
   }
+
   render() {
     const data = this.props.data;
     console.log(data);
