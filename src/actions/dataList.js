@@ -7,7 +7,10 @@ export const getList = () => dispatch => {
     }).then(response => {
         response.json().then(data => {
             console.log(data);
-
+            if(data) {
+                dispatch({type: "GET_LIST",
+                payload: data.hits})
+            }
         });
     });
 };
