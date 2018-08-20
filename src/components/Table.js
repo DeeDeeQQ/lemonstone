@@ -5,13 +5,16 @@ import Modal from "react-modal";
 import JSONPreety from "react-json-pretty";
 
 import { getList } from "../actions/dataList";
+import { Filter } from "./Filter";
 
 Modal.setAppElement(document.getElementById("root"));
 
 class Table extends Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      filterTitle: null
+    };
 
     this.handleOpenModal = this.handleOpenModal.bind(this);
     this.handleCloseModal = this.handleCloseModal.bind(this);
@@ -38,46 +41,66 @@ class Table extends Component {
     this.setState({ [id]: false });
   }
 
+  handleKeyPress = e => {
+    if (e.nativeEvent.keyCode === 13) {
+      this.setState({ filterTitle: e.target.value });
+    }
+  };
+
   render() {
     const data = this.props.data;
     console.log(data);
     return (
-      <StyledTable>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>URL</th>
-            <th>Created</th>
-            <th>Author</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data &&
-            data.map(data => (
-              <tr
-                key={data.objectID}
-                onClick={() => this.handleOpenModal(data.objectID)}
-              >
-                <Modal
-                  isOpen={this.state[`${data.objectID}`]}
-                  onAfterOpen={this.afterOpenModal}
-                  shouldCloseOnOverlayClick={true}
-                  onRequestClose={e => {
-                    this.handleCloseModal(data.objectID);
-                    e.stopPropagation();
-                  }}
-                  contentLabel=""
-                >
-                  <JSONPreety json={data} />
-                </Modal>
-                <td>{data.title}</td>
-                <td>{data.url}</td>
-                <td>{data.created_at}</td>
-                <td>{data.author}</td>
-              </tr>
-            ))}
-        </tbody>
-      </StyledTable>
+      <div>
+        <Filter list={data} handleKeyPress={this.handleKeyPress} />
+        <StyledTable>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>URL</th>
+              <th>Created</th>
+              <th>Author</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data &&
+              data.map(
+                data =>
+                  (!this.state.filterTitle ||
+                    this.state.filterTitle === data.title) && (
+                    <tr
+                      key={data.objectID}
+                      onClick={() => this.handleOpenModal(data.objectID)}
+                    >
+                      <Modal
+                        isOpen={this.state[`${data.objectID}`]}
+                        onAfterOpen={this.afterOpenModal}
+                        shouldCloseOnOverlayClick={true}
+                        style={{ overflow: "visible" }}
+                        onRequestClose={e => {
+                          this.handleCloseModal(data.objectID);
+                          e.stopPropagation();
+                        }}
+                        contentLabel="JSON Raw"
+                      >
+                        <CloseModal
+                          onClick={e => {
+                            this.handleCloseModal(data.objectID);
+                            e.stopPropagation();
+                          }}
+                        />
+                        <JSONPreety json={data} />
+                      </Modal>
+                      <td>{data.title}</td>
+                      <td>{data.url}</td>
+                      <td>{data.created_at}</td>
+                      <td>{data.author}</td>
+                    </tr>
+                  )
+              )}
+          </tbody>
+        </StyledTable>
+      </div>
     );
   }
 }
@@ -101,5 +124,32 @@ const StyledTable = styled("table")`
 
   & tr:hover {
     background-color: #99ccff;
+  }
+`;
+
+const CloseModal = styled("div")`
+  position: fixed;
+  right: 32px;
+  top: 32px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background-color: red;
+  &:after {
+    content: "";
+    height: 17px;
+    border-left: 2px solid #fff;
+    position: absolute;
+    transform: rotate(45deg);
+    left: 8px;
+  }
+
+  &:before {
+    content: "";
+    height: 17px;
+    border-left: 2px solid #fff;
+    position: absolute;
+    transform: rotate(-45deg);
+    left: 8px;
   }
 `;
