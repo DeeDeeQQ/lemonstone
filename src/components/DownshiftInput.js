@@ -10,6 +10,7 @@ const DownshiftInput = ({
   placeholder,
   items,
   onKeyDown,
+  handleKeyPress,
   ...rest
 }) => (
   <Downshift
@@ -19,6 +20,7 @@ const DownshiftInput = ({
     }}
     itemToString={itemToString}
     selectedItem={input.value}
+    onSelect={handleKeyPress}
   >
     {({
       getInputProps,
@@ -33,6 +35,7 @@ const DownshiftInput = ({
         keys: ["title"],
         maxRanking: matchSorter.rankings.STARTS_WITH
       });
+
       return (
         <div className="downshift" style={{ position: "relative" }}>
           <input
@@ -55,7 +58,6 @@ const DownshiftInput = ({
                   zIndex: 4
                 }}
               >
-                {console.log(filteredItems)}
                 {filteredItems.map(({ title, objectID }, index) => (
                   <div
                     {...getItemProps({

@@ -7,19 +7,28 @@ import DownshiftInput from "./DownshiftInput";
 const onSubmit = value => {};
 
 export const Filter = props => {
-  const { list, handleKeyPress } = props;
+  const { list, handleKeyPress, handleClear, value } = props;
   return (
     <Form
       onSubmit={onSubmit}
-      render={({ handleSubmit }) => (
+      render={({ reset }) => (
         <FilterDiv>
           <Field
-            name="hashTag"
+            name="filter"
             items={list}
             component={DownshiftInput}
             placeholder="Title"
-            onKeyDown={handleKeyPress}
+            handleKeyPress={handleKeyPress}
+            value={value}
           />
+          <button
+            onClick={() => {
+              handleClear();
+              reset();
+            }}
+          >
+            Clear
+          </button>
         </FilterDiv>
       )}
     />
@@ -29,6 +38,5 @@ export const Filter = props => {
 const FilterDiv = styled("div")`
   display: flex;
   flex-direction: row;
-  flex-basis: 100%;
   justify-content: space-around;
 `;

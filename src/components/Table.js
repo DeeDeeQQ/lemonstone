@@ -42,9 +42,12 @@ class Table extends Component {
   }
 
   handleKeyPress = e => {
-    if (e.nativeEvent.keyCode === 13) {
-      this.setState({ filterTitle: e.target.value });
-    }
+    console.log(e);
+    this.setState({ filterTitle: e });
+  };
+
+  handleClear = () => {
+    this.setState({ filterTitle: null });
   };
 
   render() {
@@ -52,7 +55,12 @@ class Table extends Component {
     console.log(data);
     return (
       <div>
-        <Filter list={data} handleKeyPress={this.handleKeyPress} />
+        <Filter
+          list={data}
+          handleKeyPress={this.handleKeyPress}
+          handleClear={this.handleClear}
+          value={this.state.filterTitle}
+        />
         <StyledTable>
           <thead>
             <tr>
